@@ -12,9 +12,6 @@
          handle_call/3,
          handle_cast/2,
          handle_info/2
-         %% terminate/2,
-         %% code_change/3,
-         %% format_status/2
         ]).
 
 -record(state,
@@ -74,26 +71,6 @@ handle_info({enet, Channel, #reliable{ data = Data }}, State) ->
     {noreply, State};
 handle_info(_Info, State) ->
     {noreply, State}.
-
-
-%% -spec terminate(Reason :: normal | shutdown | {shutdown, term()} | term(),
-%%                 State :: term()) -> any().
-%% terminate(_Reason, _State) ->
-%%     ok.
-
-
-%% -spec code_change(OldVsn :: term() | {down, term()},
-%%                   State :: term(),
-%%                   Extra :: term()) -> {ok, NewState :: term()} |
-%%                                       {error, Reason :: term()}.
-%% code_change(_OldVsn, State, _Extra) ->
-%%     {ok, State}.
-
-
-%% -spec format_status(Opt :: normal | terminate,
-%%                     Status :: list()) -> Status :: term().
-%% format_status(_Opt, Status) ->
-%%     Status.
 
 
 %%%===================================================================
