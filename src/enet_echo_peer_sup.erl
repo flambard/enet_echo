@@ -25,7 +25,8 @@ start_link(Port) ->
 init([ListeningPort]) ->
     Sup = self(),
     ConnectFun = fun(IP, Port) ->
-                         supervisor:start_child(Sup, [IP, Port])
+                         {ok, Pid} = supervisor:start_child(Sup, [IP, Port]),
+                         Pid
                  end,
     Options = [{peer_limit, 4}, {channel_limit, 4}],
     {ok, _Host} = enet:start_host(ListeningPort, ConnectFun, Options),
