@@ -1,0 +1,10 @@
+{"1.1.0",
+[{<<"enet">>,
+  {git,"https://github.com/flambard/enet.git",
+       {ref,"5647a7bf99861015bf6d4c6c9f8fe9e519e0ddd7"}},
+  0},
+ {<<"gproc">>,{pkg,<<"gproc">>,<<"0.8.0">>},1}]}.
+[
+{pkg_hash,[
+ {<<"gproc">>, <<"CEA02C578589C61E5341FCE149EA36CCEF236CC2ECAC8691FBA408E7EA77EC2F">>}]}
+].

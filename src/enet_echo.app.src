@@ -1,0 +1,18 @@
+{application, enet_echo,
+ [{description, "ENet echo server"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { enet_echo_app, []}},
+  {applications,
+   [
+    kernel,
+    stdlib,
+    enet
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+ ]}.
