@@ -17,7 +17,9 @@
 -record(state,
         {
          ip,
-         port
+         port,
+         peer,
+         channels
         }).
 
 
@@ -47,30 +49,44 @@ handle_cast(_Request, State) ->
     {noreply, State}.
 
 
-handle_info({enet, connect, remote, {_Host, Channels}, _ConnectID}, State) ->
+handle_info({enet, connect, remote, {Peer, Channels}, _ConnectID}, S) ->
     %%
     %% Handshake successful - peer is connected
     %%
-    %% - TODO: Keep track of channels
+    %% - Link to the enet peer process
+    %% - Keep track of peer and channels
     %%
-    {noreply, State};
-handle_info({enet, Channel, #unsequenced{ data = Data }}, State) ->
+    link(Peer),
+    {noreply, S#state{ peer = Peer, channels = Channels }};
+handle_info({enet, Channel, #unsequenced{ data = Data }}, S) ->
     %%
     %% Received unsequenced data - echo it
     %%
-    {noreply, State};
-handle_info({enet, Channel, #unreliable{ data = Data }}, State) ->
+    io:format("--> ~p\n", [Data]),
+    #state{ channels = #{ Channel := ChannelPid }} = S,
+    enet:send_unsequenced(ChannelPid, Data),
+    io:format("<-- ~p\n", [Data]),
+    {noreply, S};
+handle_info({enet, Channel, #unreliable{ data = Data }}, S) ->
     %%
     %% Received unreliable data - echo it
     %%
-    {noreply, State};
-handle_info({enet, Channel, #reliable{ data = Data }}, State) ->
+    io:format("--> ~p\n", [Data]),
+    #state{ channels = #{ Channel := ChannelPid }} = S,
+    enet:send_unreliable(ChannelPid, Data),
+    io:format("<-- ~p\n", [Data]),
+    {noreply, S};
+handle_info({enet, Channel, #reliable{ data = Data }}, S) ->
     %%
     %% Received reliable data - echo it
     %%
-    {noreply, State};
-handle_info(_Info, State) ->
-    {noreply, State}.
+    io:format("--> ~p\n", [Data]),
+    #state{ channels = #{ Channel := ChannelPid }} = S,
+    enet:send_reliable(ChannelPid, Data),
+    io:format("<-- ~p\n", [Data]),
+    {noreply, S};
+handle_info(_Info, S) ->
+    {noreply, S}.
 
 
 %%%===================================================================
