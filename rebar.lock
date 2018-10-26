@@ -1,7 +1,7 @@
 {"1.1.0",
 [{<<"enet">>,
   {git,"https://github.com/flambard/enet.git",
-       {ref,"5647a7bf99861015bf6d4c6c9f8fe9e519e0ddd7"}},
+       {ref,"a72137fe8f5915652a5025ba70606c6943d0fe45"}},
   0},
  {<<"gproc">>,{pkg,<<"gproc">>,<<"0.8.0">>},1}]}.
 [
