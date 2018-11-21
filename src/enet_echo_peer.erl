@@ -4,7 +4,7 @@
 -include_lib("enet/include/enet.hrl").
 
 %% API
--export([ start_link/2 ]).
+-export([ start_link/1 ]).
 
 %% gen_server callbacks
 -export([
@@ -27,17 +27,27 @@
 %%% API
 %%%===================================================================
 
-start_link(IP, Port) ->
-    gen_server:start_link(?MODULE, [IP, Port], []).
+start_link(PeerInfo) ->
+    gen_server:start_link(?MODULE, PeerInfo, []).
 
 
 %%%===================================================================
 %%% gen_server callbacks
 %%%===================================================================
 
-init([IP, Port]) ->
+init(PeerInfo) ->
+    #{ ip := IP,
+       port := Port,
+       peer := Peer,
+       channels := Channels
+     } = PeerInfo,
     process_flag(trap_exit, true),
-    {ok, #state{ ip = IP, port = Port }}.
+    link(Peer),
+    State = #state{ ip = IP,
+                    port = Port,
+                    peer = Peer,
+                    channels = Channels },
+    {ok, State}.
 
 
 handle_call(_Request, _From, State) ->
@@ -49,15 +59,6 @@ handle_cast(_Request, State) ->
     {noreply, State}.
 
 
-handle_info({enet, connect, remote, {Peer, Channels}, _ConnectID}, S) ->
-    %%
-    %% Handshake successful - peer is connected
-    %%
-    %% - Link to the enet peer process
-    %% - Keep track of peer and channels
-    %%
-    link(Peer),
-    {noreply, S#state{ peer = Peer, channels = Channels }};
 handle_info({enet, Channel, #unsequenced{ data = Data }}, S) ->
     %%
     %% Received unsequenced data - echo it
